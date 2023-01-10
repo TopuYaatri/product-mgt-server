@@ -21,6 +21,26 @@ async function connectMongoDb() {
 
 connectMongoDb();
 
+const productSchema = new mongoose.Schema({
+  name: String,
+  inStock: Boolean,
+  price: Number,
+});
+
+const Product = mongoose.model("Product", productSchema);
+
+app.post("/product", async (req, res) => {
+  const newProduct = new Product(req.body);
+  const newProductResponse = await newProduct.save();
+  res.status(201).send(newProductResponse);
+});
+
+app.get("/product/:id", async (req, res) => {
+  const id = req.params.id;
+  const product = await Product.findById(id);
+  res.status(200).send(product);
+});
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
